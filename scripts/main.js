@@ -26,6 +26,7 @@ $(document).ready(function(){
 		* uncomment before staging
 
 	*/
+	box.hide();
 	if(navigator.geolocation){
 		navigator.geolocation.getCurrentPosition(function(position){
 			console.log(position);
@@ -58,7 +59,7 @@ $(document).ready(function(){
 		}
 	};
 
-	box.hide();
+	
 
 	// getWeather(dummyPos,displayWeather);
 });
