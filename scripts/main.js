@@ -29,9 +29,7 @@ $(document).ready(function(){
 	if(navigator.geolocation){
 		navigator.geolocation.getCurrentPosition(function(position){
 			console.log(position);
-			getWeather(position,function(json){
-			console.log('weather json: '+json);
-	});
+			getWeather(position,displayWeather);
 
 		},function(error){
 			switch(error.code){
