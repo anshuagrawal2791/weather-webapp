@@ -20,63 +20,93 @@ var celsius_text = $('#celsius-text');
 
 $(document).ready(function(){
 
-	/*
+/*
 
-		* getting location from ip
-		* uncomment before staging
+* getting location from ip
+* uncomment before staging
 
-	*/
-	box.hide();
-	if(navigator.geolocation){
-		navigator.geolocation.getCurrentPosition(function(position){
-			console.log(position);
-			getWeather(position,displayWeather);
+*/
+box.hide();
+if(navigator.geolocation){
+	navigator.geolocation.getCurrentPosition(function(position){
+		console.log(position);
+		getWeather(position,"",displayWeather);
 
-		},function(error){
-			switch(error.code){
-				case error.PERMISSION_DENIED:
-				alert("User denied the request for Geolocation.");
-				break;
-				case error.POSITION_UNAVAILABLE:
-				alert("Location information is unavailable.\nPlease choose location manually from sidebar.");
-				break;
-				case error.TIMEOUT:
-				alert("Request timed out");
-				break;
-				case error.UNKNOWN_ERROR:
-				alert("An unknown error occurred.");
-				break;
-			}
+	},function(error){
+		switch(error.code){
+			case error.PERMISSION_DENIED:
+			alert('Failed to retrieve secure location data\n' +'\nEnsure that the browser you are using has location service permission enabled\n');
+			break;
+			case error.POSITION_UNAVAILABLE:
+			alert("Location information is unavailable.");
+			break;
+			case error.TIMEOUT:
+			alert("Request timed out");
+			break;
+			case error.UNKNOWN_ERROR:
+			alert("An unknown error occurred.");
+			break;
+		}
+		var cityChosen=window.prompt("Please Enter your city","");
+
+		if (cityChosen == null || cityChosen == "") {
+			console.log( "User canceled the prompt.");
+		} else {
+			getWeather("",cityChosen,displayWeather);
+		}
+	});
+}else{
+	alert("Can't get location!");
+}
+
+// var dummyPos = {
+// 	coords:{
+// 		latitude:dummyLat,
+// 		longitude:dummyLon
+// 	}
+// };
+
+
+
+// getWeather(dummyPos,displayWeather);
+});
+var getWeather = function(position,city,callback){
+	var appendToURL;
+	if(city!="")
+		{
+			$.ajax({
+				url:'https://api.openweathermap.org/data/2.5/weather?',
+				dataType:'jsonp',
+				data:{
+					'q':city,
+					'APPID':'0c92710be80f1ccdf0d91f108c064280'
+
+
+				},
+				error: function () {
+                	console.log("error");
+            	},
+				success:callback
+				
+
+			});
+		}
+	else
+	{
+		$.ajax({
+			url:'https://api.openweathermap.org/data/2.5/weather?',
+			dataType:'jsonp',
+			data:{
+				'lat':position.coords.latitude,
+				'lon':position.coords.longitude,
+				'APPID':'0c92710be80f1ccdf0d91f108c064280'
+
+
+			},
+			success:callback
 		});
-	}else{
-		alert("Can't get location!");
 	}
 
-	var dummyPos = {
-		coords:{
-			latitude:dummyLat,
-			longitude:dummyLon
-		}
-	};
-
-	
-
-	// getWeather(dummyPos,displayWeather);
-});
-var getWeather = function(position,callback){
-
-	$.ajax({
-		url:'https://api.openweathermap.org/data/2.5/weather?',
-		dataType:'jsonp',
-		data:{
-	'lat':position.coords.latitude,
-	'lon':position.coords.longitude,
-	'APPID':'0c92710be80f1ccdf0d91f108c064280'
-	
-
-},
-success:callback
-});
 
 }
 
@@ -92,6 +122,7 @@ celsius_slider.click(function(){
 });
 
 function displayWeather(json){
+
 	console.log('displayWeather called');
 
 
@@ -139,10 +170,10 @@ function displayWeather(json){
 		humidity.html('Humidity '+h+'%');
 	if(cloudiness!== undefined)
 		cloud.html('Cloud Cover '+cloudiness+'%');
-	// console.log(icon);
-	if(icon)
-		image.attr('src','https://openweathermap.org/img/w/'+icon+'.png');
-	console.log(json);
+// console.log(icon);
+if(icon)
+	image.attr('src','https://openweathermap.org/img/w/'+icon+'.png');
+console.log(json);
 
 }
 
